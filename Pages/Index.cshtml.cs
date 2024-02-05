@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Primitives;
+using System.Reflection.Metadata;
+using Azure.Monitor.Query;
+using Azure.Identity;
 
 namespace azurepopchecker.Pages
 {
@@ -14,6 +18,22 @@ namespace azurepopchecker.Pages
 
         public void OnGet()
         {
+            
+        }
+
+        public string GetAFDPOP()
+        {
+            string XAzureRef = "";
+            if (Request.Headers.TryGetValue("x-azure-ref", out var values))
+            {
+                XAzureRef = values.First();
+            }
+
+            string tenantID = "";
+            string clientID = "";
+            string clientSecret = "";
+
+
 
         }
     }
