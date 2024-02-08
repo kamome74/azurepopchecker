@@ -3,14 +3,22 @@
 
 // Write your JavaScript code.
 
-var countdown = 60;
+var countdown = 10;
 var MyTimer;
+var retry = false;
 
-function setCountdown() {
+function setCountdown(flag) {
     MyTimer = setInterval(alertFunc, 1000);
+    retry = flag;
 }
 function alertFunc() {
-    document.getElementById("countdownMsg").innerHTML = "<h3>Will check after " + countdown + " seconds....</h3>";
+
+    if(!retry)
+        var message = "<h3>Will check after " + countdown + " seconds....</h3>";
+    else
+        var message = "<h3>Waiting again for " + countdown + " seconds....</h3>";
+
+    document.getElementById("countdownMsg").innerHTML = message;
 
     if (countdown == 0) {
         clearInterval(MyTimer);

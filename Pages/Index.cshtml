@@ -14,7 +14,7 @@
     }
 
     <script language="javascript">
-        window.onload = setCountdown();
+        window.onload = setCountdown(false);
     </script>
 
     <div class="text-center">
@@ -29,7 +29,7 @@
     <div class="text-center"><h3>Waiting for log to generate....</h3> </div>
     <div class="text-center" id="countdownMsg"></div>
 }
-else if (Model.getResult().message == "")
+else if (Model.getResult().found)
 {
     <div class="text-center">
         <h1 class="display-4">Azure FrontDoor POP Checker</h1>
@@ -47,8 +47,19 @@ else if (Model.getResult().message == "")
 }
 else
 {
+    <script language="javascript">
+        window.onload = setCountdown(true);
+    </script>
+
     <div class="text-center">
         <h1 class="display-4">Azure FrontDoor POP Checker</h1>
-        <p> @Model.getResult().message </p>
     </div>
+    <div>
+        <form id="runQuery" method="post">
+            <input type="hidden" id="XAzureRef" name="XAzureRef" value="@Model.getResult().XAzureRef" />
+        </form>
+    </div>
+    <div class="text-center"><h3>Log is not ready yet....</h3> </div>
+    <div class="text-center" id="countdownMsg"></div>
+    <div class="text-center">Current Session : @Model.getResult().XAzureRef</div>
 }

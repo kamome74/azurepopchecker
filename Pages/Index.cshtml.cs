@@ -13,7 +13,7 @@ namespace azurepopchecker.Pages
 		public string pop = "";
 		public string popLocation = "";
 		public string popRegion = "";
-		public string message = "";
+		public bool found = false;
 	}
 
 	struct popInfo
@@ -72,20 +72,20 @@ namespace azurepopchecker.Pages
 
 		public void OnPost()
 		{
-			isPost = true;
+			isPost=true;
 
 			string trackingRef = Request.Form["XAzureRef"];
 
-			string tenantID = "Your Azure Entra Tenant ID";
-			string clientID = "Your Registered Application's Client ID";
-			string clientSecret = "Your Registered Application's Key Value";
+			string tenantID = "[Azure Entra ID Tenant ID]";
+			string clientID = "[Registered Application ID]";
+			string clientSecret = "[Application's Credential Secret Value]";
 
 			var credential = new Azure.Identity.ClientSecretCredential(tenantID, clientID, clientSecret);
 			var logAnalyticsClient = new Azure.Monitor.Query.LogsQueryClient(credential);
 
-			string querystring = "AzureDiagnostics | where Category == \"FrontDoorAccessLog\" and trackingReference_s == \"" + trackingRef + "\"";
-
-			string analyticsSpaceId = "Your Log Analytics Workspace ID";
+			string querystring =  "AzureDiagnostics | where Category == \"FrontDoorAccessLog\" and trackingReference_s == \"" + trackingRef + "\"";
+           
+			string analyticsSpaceId = "[Log Analytics Workspace ID]";
 
 			Azure.Response<Azure.Monitor.Query.Models.LogsQueryResult> response = logAnalyticsClient.QueryWorkspace(
 					analyticsSpaceId,
@@ -93,11 +93,14 @@ namespace azurepopchecker.Pages
 					new Azure.Monitor.Query.QueryTimeRange(TimeSpan.FromDays(1)));
 
 			LogsTable table = response.Value.Table;
-			res = new QueryResult();
+            res = null;
+            res = new QueryResult();
 			Dictionary<string, popInfo> poplist = loadCSV("Pages/data/poplist.csv");
 
 			if (table.Rows.Count == 0)
-				res.message = "Nope. Nothing";
+			{
+				res.XAzureRef = trackingRef;
+			}
 			else
 			{
 				var pop_s = table.Rows.First()["pop_s"].ToString();
@@ -109,6 +112,7 @@ namespace azurepopchecker.Pages
 				res.pop = pop_s;
 				res.popLocation = poplist[pop_s].popLoc;
 				res.popRegion = poplist[pop_s].popRegion;
+				res.found = true;
 			}
 		}
 	}
